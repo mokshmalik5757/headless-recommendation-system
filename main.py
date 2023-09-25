@@ -1,4 +1,5 @@
 from fastapi import FastAPI, status
+from fastapi.middleware.cors import CORSMiddleware
 
 recommended_products = {
         "products": {
@@ -86,6 +87,16 @@ recommended_products = {
 
 
 app = FastAPI(title="Recommendation system API", debug = True)
+
+origins = ['*']
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/", tags= ["recommended_products"], status_code=status.HTTP_200_OK)
 async def fetch_user_id():
