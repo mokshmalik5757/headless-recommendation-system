@@ -10,6 +10,7 @@ from transformers import AutoTokenizer, AutoModel
 import torch
 import warnings
 warnings.filterwarnings('ignore')
+from pydantic import BaseModel
 
 #  recommended_products = {
 #         "products": {
@@ -401,6 +402,12 @@ warnings.filterwarnings('ignore')
 
 app = FastAPI(title="Recommendation system API", debug = True)
 
+class SKU(BaseModel):
+    sku: str
+
+class Keywords(BaseModel):
+    search_keywords: list[str]
+
 product_embeddings = np.load(r"./product_embeddings.npy")
 
 products_df = pd.read_csv(r"./headless data preprocessed")
@@ -466,10 +473,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.post("/related_products/{sku}", tags= ["related_products"], status_code=status.HTTP_200_OK)
-async def get_related_products(sku: str, num_recommendations: int = 10):
+@app.post("/related_products/", tags= ["related_products"], status_code=status.HTTP_200_OK)
+async def get_related_products(sku: SKU, num_recommendations: int = 10):
     try:
-        sku = sku
+        sku = sku.sku
+        print(sku)
         num_recommendations = num_recommendations
         
         related_products_cluster_5 = recommend_related_products(5, sku, num_recommendations)
@@ -482,11 +490,11 @@ async def get_related_products(sku: str, num_recommendations: int = 10):
         return {"error": str(e)}
     
     
-@app.post("/recommended_products/{search_keywords}", tags= ["related_products"], status_code=status.HTTP_200_OK)
-async def get_recommended_products(search_keywords: str, num_recommendations: int = 10):
+@app.post("/recommended_products/", tags= ["recommended_products"], status_code=status.HTTP_200_OK)
+async def get_recommended_products(search_keywords: Keywords, num_recommendations: int = 10):
     try:
         final_df = pd.DataFrame()
-        query = search_keywords
+        query = search_keywords.search_keywords
         for item in query:
             recommendations = recommend_products_by_query(item, num_recommendations)
             final_df = pd.concat([final_df, recommendations], axis=0)
