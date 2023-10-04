@@ -1,2 +1,8 @@
 fastapi
 uvicorn
+transformers
+textblob
+scikit-learn
+pandas
+numpy
+torch
