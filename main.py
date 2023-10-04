@@ -417,15 +417,14 @@ model = AutoModel.from_pretrained("thenlper/gte-small")
 
 encoder = OneHotEncoder(handle_unknown="ignore")
 encoded_features = encoder.fit_transform(
-    products_df[["color", "category_gear", "activity", "material"]]
-).toarray()
+    products_df[["color", "category_gear", "activity", "material"]]).toarray() # type: ignore
 
 def recommend_related_products(num_clusters, sku, num_recommendations=5):
     kmeans = KMeans(n_clusters=num_clusters, init="k-means++", n_init='auto', random_state=42)
     products_df["cluster_label"] = kmeans.fit_predict(product_embeddings)
     cluster_label = products_df.loc[
         products_df["sku"] == sku, "cluster_label"
-    ].iloc[0]
+    ].iloc[0] # type: ignore
     related_products = products_df[products_df["cluster_label"] == cluster_label]
 
     if len(related_products) > num_recommendations:
@@ -451,8 +450,8 @@ def recommend_products_by_query(query, num_recommendations=5):
     query_embedding = embed_text(corrected_query)
 
     query_cat_features = encoder.transform(
-        [["Unknown", "Unknown", "Unknown", "Unknown"]]
-    ).toarray()
+        [["Unknown", "Unknown", "Unknown", "Unknown"]] # type: ignore
+    ).toarray() # type: ignore
 
     query_vector = np.concatenate([query_embedding, query_cat_features], axis=1)
 
@@ -476,8 +475,7 @@ app.add_middleware(
 @app.post("/related_products/", tags= ["related_products"], status_code=status.HTTP_200_OK)
 async def get_related_products(sku: SKU, num_recommendations: int = 10):
     try:
-        sku = sku.sku
-        print(sku)
+        sku = sku.sku # type: ignore
         num_recommendations = num_recommendations
         
         related_products_cluster_5 = recommend_related_products(5, sku, num_recommendations)
@@ -485,10 +483,10 @@ async def get_related_products(sku: SKU, num_recommendations: int = 10):
 
         result_df = pd.concat([related_products_cluster_5, related_products_cluster_6], axis=0, ignore_index=True).replace(['Unknown', np.nan], None)
         related_products = result_df.drop(['text_features','text_embeddings','cluster_label'], axis=1).to_dict(orient='records')
-        return related_products
-    except Exception as e:
-        return {"error": str(e)}
-    
+        return {"message": "Success", "result": related_products, "status": str(status.HTTP_200_OK)}
+    except Exception:
+        return {"message": f"No product found for the SKU {sku}", "result": [], "status": str(status.HTTP_400_BAD_REQUEST)}
+
     
 @app.post("/recommended_products/", tags= ["recommended_products"], status_code=status.HTTP_200_OK)
 async def get_recommended_products(search_keywords: Keywords, num_recommendations: int = 10):
@@ -500,7 +498,7 @@ async def get_recommended_products(search_keywords: Keywords, num_recommendation
             final_df = pd.concat([final_df, recommendations], axis=0)
             final_df = final_df.sample(frac=1).replace(['Unknown', np.nan], None)
         
-        return final_df.drop(['text_features','text_embeddings'], axis=1).to_dict(orient='records')
+        return {"message": "Success", "result": final_df.drop(['text_features','text_embeddings'], axis=1).to_dict(orient='records'), "status": str(status.HTTP_200_OK)}
 
-    except Exception as e:
-        return {"error": str(e)}    
+    except Exception:
+        return {"message": f"No product found for keywords {search_keywords.search_keywords}","result": [], "status": str(status.HTTP_400_BAD_REQUEST)} 
