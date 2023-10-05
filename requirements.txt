@@ -1,8 +1,7 @@
 fastapi
-uvicorn
-transformers
+uvicorn[standard]
 textblob
 scikit-learn
 pandas
 numpy
-torch
+transformers

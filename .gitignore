@@ -403,6 +403,7 @@ headless data final
 headless data final.csv
 api.py
 test/hybrid_rec_sys.ipynb
+requirements_windows.txt
 # End of https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,django,flask,python
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
