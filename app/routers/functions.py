@@ -9,8 +9,8 @@ import torch
 import warnings
 warnings.filterwarnings('ignore')
 
-product_embeddings = np.load(r".\app\static\product_embeddings.npy")
-products_df = pd.read_csv(r".\app\static\headless data preprocessed.csv")
+product_embeddings = np.load("./app/static/product_embeddings.npy")
+products_df = pd.read_csv("./app/static/headless data preprocessed.csv")
 
 tokenizer = AutoTokenizer.from_pretrained("thenlper/gte-small")
 model = AutoModel.from_pretrained("thenlper/gte-small")
