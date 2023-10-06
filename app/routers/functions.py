@@ -12,8 +12,8 @@ warnings.filterwarnings('ignore')
 product_embeddings = np.load("./app/static/product_embeddings.npy")
 products_df = pd.read_csv("./app/static/headless data preprocessed.csv")
 
-tokenizer = AutoTokenizer.from_pretrained("thenlper/gte-small")
-model = AutoModel.from_pretrained("thenlper/gte-small")
+tokenizer = AutoTokenizer.from_pretrained("sentence-transformers/all-mpnet-base-v2")
+model = AutoModel.from_pretrained("sentence-transformers/all-mpnet-base-v2")
 
 encoder = OneHotEncoder(handle_unknown="ignore")
 encoded_features = encoder.fit_transform(

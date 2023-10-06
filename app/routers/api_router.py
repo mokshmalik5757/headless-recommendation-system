@@ -25,14 +25,13 @@ async def get_related_products(sku: schemas.SKU, num_recommendations: int = 10):
 @router.post("/recommended_products/", tags= ["recommended_products"], status_code=status.HTTP_200_OK)
 async def get_recommended_products(search_keywords: schemas.Keywords, num_recommendations: int = 10):
     try:
-        final_df = pd.DataFrame()
-        query = search_keywords.search_keywords
-        for item in query:
-            recommendations = recommend_products_by_query(item, num_recommendations)
-            final_df = pd.concat([final_df, recommendations], axis=0)
-            final_df = final_df.sample(frac=1).replace(['Unknown', np.nan], None)
         
-        return {"message": "Success", "result": final_df.drop(['text_features','text_embeddings'], axis=1).to_dict(orient='records'), "status": str(status.HTTP_200_OK)}
+        query = search_keywords.search_keywords
+        
+        recommendations = recommend_products_by_query(query, num_recommendations)
+        recommendations = recommendations.replace(['Unknown', np.nan], None)
+        
+        return {"message": "Success", "result": recommendations.drop(['text_features','text_embeddings'], axis=1).to_dict(orient='records'), "status": str(status.HTTP_200_OK)}
 
     except Exception:
         return {"message": f"No product found for keywords {search_keywords.search_keywords}", "result": [], "status": str(status.HTTP_400_BAD_REQUEST)} 
