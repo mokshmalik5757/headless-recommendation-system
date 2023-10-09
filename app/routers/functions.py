@@ -41,13 +41,13 @@ def embed_text(text):
     return embeddings.numpy()
 
 
-def correct_spelling(query):
-    return str(TextBlob(query).correct())
+# def correct_spelling(query):
+#     return str(TextBlob(query).correct())
 
 def recommend_products_by_query(query, num_recommendations=5):
-    corrected_query = correct_spelling(query)
+    # corrected_query = correct_spelling(query)
 
-    query_embedding = embed_text(corrected_query)
+    query_embedding = embed_text(query)
 
     query_cat_features = encoder.transform(
         [["Unknown"]] # type: ignore
