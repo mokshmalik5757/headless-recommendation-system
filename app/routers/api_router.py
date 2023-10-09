@@ -4,19 +4,24 @@ import numpy as np
 from app import schemas
 from .functions import recommend_products_by_query, recommend_related_products
 
+df_cleaned = pd.read_csv("./app/static/headless_data_with_clusters.csv")
+
 router = APIRouter()
 
 @router.post("/related_products/", tags= ["related_products"], status_code=status.HTTP_200_OK)
-async def get_related_products(sku: schemas.SKU, num_recommendations: int = 10):
+async def get_related_products(sku: schemas.SKU):
     try:
-        sku = sku.sku # type: ignore
-        num_recommendations = num_recommendations
+        sku_id = sku.sku # type: ignore
         
-        related_products_cluster_5 = recommend_related_products(5, sku, num_recommendations)
-        related_products_cluster_6 = recommend_related_products(6, sku, num_recommendations)
+        cluster_index = df_cleaned[df_cleaned['sku'] == sku_id]['cluster'].values[0] 
+        related_products = df_cleaned[(df_cleaned['cluster'] == cluster_index) & (df_cleaned['sku'] != sku_id)]
+        # num_recommendations = num_recommendations
+        
+        # related_products_cluster_5 = recommend_related_products(5, sku, num_recommendations)
+        # related_products_cluster_6 = recommend_related_products(6, sku, num_recommendations)
 
-        result_df = pd.concat([related_products_cluster_5, related_products_cluster_6], axis=0, ignore_index=True).replace(['Unknown', np.nan], None)
-        related_products = result_df.drop(['text_features','text_embeddings','cluster_label'], axis=1).to_dict(orient='records')
+        # result_df = pd.concat([related_products_cluster_5, related_products_cluster_6], axis=0, ignore_index=True).replace(['Unknown', np.nan], None)
+        related_products = related_products.drop(['combined_text','cleaned_combined_text','cluster'], axis=1).to_dict(orient='records')
         return {"message": "Success", "result": related_products, "status": str(status.HTTP_200_OK)}
     except Exception:
         return {"message": f"No product found for the SKU {sku}", "result": [], "status": str(status.HTTP_400_BAD_REQUEST)}
