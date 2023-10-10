@@ -3,7 +3,7 @@ import pandas as pd
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.metrics.pairwise import cosine_similarity
-from textblob import TextBlob
+# from textblob import TextBlob
 from transformers import AutoTokenizer, AutoModel
 import torch
 import warnings
