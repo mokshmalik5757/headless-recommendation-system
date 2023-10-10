@@ -21,6 +21,7 @@ async def get_related_products(sku: schemas.SKU):
         # related_products_cluster_6 = recommend_related_products(6, sku, num_recommendations)
 
         # result_df = pd.concat([related_products_cluster_5, related_products_cluster_6], axis=0, ignore_index=True).replace(['Unknown', np.nan], None)
+        related_products = related_products.replace(['Unknown', np.nan], None)
         related_products = related_products.drop(['combined_text','cleaned_combined_text','cluster'], axis=1).to_dict(orient='records')
         return {"message": "Success", "result": related_products, "status": str(status.HTTP_200_OK)}
     except Exception:

@@ -406,6 +406,8 @@ test/hybrid_rec_sys.ipynb
 requirements_windows.txt
 test/clustering_test.ipynb
 test/test.csv
+test/headless_data_with_clusters.csv
+test/headless data preprocessed.csv
 # End of https://www.toptal.com/developers/gitignore/api/windows,visualstudiocode,django,flask,python
 
 # Custom rules (everything added below won't be overriden by 'Generate .gitignore File' if you use 'Update' option)
