@@ -14,7 +14,7 @@ async def get_related_products(sku: schemas.SKU):
         sku_id = sku.sku # type: ignore
         
         cluster_index = df_cleaned[df_cleaned['sku'] == sku_id]['cluster'].values[0] 
-        related_products = df_cleaned[(df_cleaned['cluster'] == cluster_index) & (df_cleaned['sku'] != sku_id)]
+        related_products = df_cleaned[(df_cleaned['cluster'] == cluster_index) & (df_cleaned['sku'] != sku_id)].head(5)
         # num_recommendations = num_recommendations
         
         # related_products_cluster_5 = recommend_related_products(5, sku, num_recommendations)
