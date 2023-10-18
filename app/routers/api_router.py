@@ -29,7 +29,7 @@ async def get_related_products(sku: schemas.SKU):
 
     
 @router.post("/recommended_products/", tags= ["recommended_products"], status_code=status.HTTP_200_OK)
-async def get_recommended_products(search_keywords: schemas.Keywords, num_recommendations: int = 10):
+async def get_recommended_products(search_keywords: schemas.Keywords, num_recommendations: int = 5):
     try:
         
         query = search_keywords.search_keywords
